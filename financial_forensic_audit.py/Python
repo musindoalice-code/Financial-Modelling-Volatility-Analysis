@@ -1,1 +1,70 @@
+"""
+EXPLORATORY FINANCIAL DATA MODELLING & VOLATILITY ANALYSIS ENGINE
+Author: Portfolio Financial Data Analyst
+Objective: Multi-dimensional Forensic Accounting Data Scrubbing Framework
+"""
+
+import pandas as pd
+import numpy as np
+from rapidfuzz import fuzz
+
+# 1. Pipeline Data Seeding & Structural Ingestion
+raw_data = {
+    'Invoice_ID': ['INV-2026-001', 'INV-2026-002', 'INV-2026-003', 'INV-2026-004', 'INV-2026-005', 'INV-2026-006'],
+    'Vendor_Name': ['Vodacom SA', 'Vodacom S.A.', 'Eskom Holdings', 'Escom Holdings', 'PwC South Africa', 'PriceWaterhouseCoopers'],
+    'Amount_ZAR': [14500.00, 14500.00, 89200.50, 89100.00, 45000.00, 45000.00], # Eskom incorporates a fuzzy number variance
+    'Invoice_Date': ['2026-03-01', '2026-03-01', '2026-03-04', '2026-03-05', '2026-03-10', '2026-03-12']
+}
+
+df = pd.DataFrame(raw_data)
+
+# 2. Structural Parsing & Data Engineering Stage
+print("⚡ Executing programmatic cleansing...")
+df['Invoice_Date'] = pd.to_datetime(df['Invoice_Date'])
+df['Amount_ZAR'] = pd.to_numeric(df['Amount_ZAR'], errors='coerce')
+
+# 3. Dynamic Multi-Dimensional Fuzzy Audit Engine
+def run_forensic_analysis(dataframe, string_threshold=75, numeric_tolerance=0.02, rolling_days=14):
+    anomalies = []
+    total_records = len(dataframe)
+    
+    for i in range(total_records):
+        for j in range(i + 1, total_records):
+            row1, row2 = dataframe.iloc[i], dataframe.iloc[j]
+            
+            # Metric A: Fuzzy Text Similarity Logic Matrix
+            text_similarity = max(
+                fuzz.token_sort_ratio(str(row1['Vendor_Name']), str(row2['Vendor_Name'])),
+                fuzz.partial_ratio(str(row1['Vendor_Name']), str(row2['Vendor_Name']))
+            )
+            
+            # Explicit Alias Override Mapping via Python Logic
+            if "pwc" in str(row1['Vendor_Name']).lower() and "pricewaterhouse" in str(row2['Vendor_Name']).lower():
+                text_similarity = 100.0
+                
+            # Metric B: Fuzzy Temporal Proximity Evaluation
+            day_gap = abs((row1['Invoice_Date'] - row2['Invoice_Date']).days)
+            
+            # Metric C: Fuzzy Mathematical Value Proximity Check
+            absolute_diff = abs(row1['Amount_ZAR'] - row2['Amount_ZAR'])
+            max_value = max(row1['Amount_ZAR'], row2['Amount_ZAR'])
+            variance_pct = absolute_diff / max_value if max_value > 0 else 0
+            
+            # Evaluator Gate Checking
+            if text_similarity >= string_threshold and day_gap <= rolling_days and variance_pct <= numeric_tolerance:
+                anomalies.append({
+                    'Exception_ID': f"ERR-{row1['Invoice_ID']}-{row2['Invoice_ID']}",
+                    'Identified_Entities': f"[{row1['Vendor_Name']}] vs [{row2['Vendor_Name']}]",
+                    'Financial_Exposure_ZAR': max_value,
+                    'Fuzzy_Match_Score': round(text_similarity, 1),
+                    'Variance_Percentage': f"{round(variance_pct * 100, 2)}%",
+                    'Days_Interval': day_gap
+                })
+                
+    return pd.DataFrame(anomalies)
+
+# Run Engine and Output Results
+audit_exceptions_df = run_forensic_analysis(df)
+print("\n🎯 FORENSIC ANALYSIS SUMMARY REPORT:")
+print(audit_exceptions_df.to_string(index=False))
 
