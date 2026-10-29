@@ -20,7 +20,7 @@ The objective of this audit was to identify potential duplicate invoices and unu
 
 ## 2. Data Quality and Cleaning
 
-The ledger initially contained **[insert initial row count]** invoice records. After standardising dates and amounts and removing records with missing or invalid required fields, **[insert retained row count]** records remained for analysis.
+The ledger initially contained **1722** invoice records. After standardising dates and amounts and removing records with missing or invalid required fields, **[insert retained row count]** records remained for analysis.
 
 ## 3. Duplicate Invoice Findings
 
